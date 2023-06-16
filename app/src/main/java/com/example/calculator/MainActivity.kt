@@ -11,6 +11,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -39,7 +40,6 @@ class MainActivity : AppCompatActivity() {
             item.setOnClickListener { clickEvent(it) }
         }
     }
-
     private fun clickEvent(view: View) {
         when (view.id) {
             R.id.number_seven -> numberEvent(view)
@@ -63,7 +63,11 @@ class MainActivity : AppCompatActivity() {
             R.id.all_clear -> allClearOperation()
 
 
-            R.id.number_equal -> performCalculation()
+            R.id.number_equal -> {
+                var total: Int = performCalculation(binding.result.text.toString())
+
+                binding.finalResult.text = total.toString()
+            }
 
         }
     }
@@ -85,36 +89,59 @@ class MainActivity : AppCompatActivity() {
     fun numberEvent(view: View) {
         if (view is Button) {
             binding.result.append(view.text)
-            var checkElement: Char = view.text.toString().single()
-
         }
     }
+    fun precedence(operator1: Char, operator2: Char): Boolean {
 
-    fun performCalculation() {
-        var stringExpression: String = binding.result.text.toString()
-        var charArray = stringExpression.toCharArray(0, stringExpression.length - 1)
-
+        if ((operator1 == '*' || operator1 == '/') &&
+            (operator2 == '+' || operator2 == '-')
+        )
+            return false;
+        else
+            return true
+    }
+    fun performCalculation(stringExpression: String):Int {
+        var charArray = stringExpression.toCharArray()
+        var length=charArray.size
 
         val numbers = Stack<Int>()
-        val operators=Stack<Char>()
+        val operators = Stack<Char>()
 
-
-        for (i in charArray.indices) {
-            if (charArray[i] <= '0' && charArray[i] <= '9') {
-                var mutedExpresion=StringBuffer()
-
-                while (i < charArray.size&&
-                    charArray[i] >= '0' &&
-                    charArray[i] <= '9'){
-                    mutedExpresion.append(charArray[i])
+var i=0
+        while(i<length) {
+            if (charArray[i] >= '0' && charArray[i] <= '9') {
+                var mutedExpression = StringBuffer()
+                var j:Int=i
+                while (j < charArray.size && (charArray[j] >= '0' && charArray[j] <= '9')) {
+                    mutedExpression.append(charArray[j])
+                    j++
                 }
-                numbers.push(mutedExpresion.toString().toInt())
-            }
-            else if(charArray[i] =='+' ||charArray[i] =='-'||  charArray[i] =='*' ||charArray[i] =='/' || charArray[i] =='%'){
+                numbers.push(mutedExpression.toString().toInt())
+                i=j
 
+            } else if (charArray[i] == '+' || charArray[i] == '-' || charArray[i] == '*' || charArray[i] == '/' || charArray[i] == '%') {
+                while (!operators.isEmpty() && precedence(charArray[i], operators.peek())) {
+                    numbers.push(applyOperstions(operators.pop(), numbers.pop(), numbers.pop()))
+                }
+                operators.push(charArray[i])
+i++
             }
         }
+        while (!operators.isEmpty()) {
+            numbers.push(applyOperstions(operators.pop(), numbers.pop(), numbers.pop()))
+        }
+        return numbers.pop()
 
     }
 }
 
+fun applyOperstions(operator: Char, num1: Int, num2: Int): Int {
+    when (operator) {
+        '+' -> return num1 + num2
+        '-' -> return num1 - num2
+        '*' -> return num1 * num2
+        '/' -> return num2/ num1
+        '%' -> return num2 % num1
+        else -> return 0
+    }
+}
