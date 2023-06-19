@@ -24,7 +24,16 @@
     <string name="allclear">AC</string>
     <string name="delete">X</string>
     <string name="none"></string>
+
+
+
+    <string name="leftpara">(</string>
+    <string name="rightpara">)</string>
+
     <string name="calculator_hint">000000</string>
     <string name="finalResult">000000</string>
+    <string name="sin_tita">SIN</string>
+    <string name="cos_tita">cos</string>
+
 
 </resources>
