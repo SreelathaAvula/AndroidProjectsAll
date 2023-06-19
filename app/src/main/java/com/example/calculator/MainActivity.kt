@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
 
 
             R.id.number_equal -> {
-                var total: Int = performCalculation(binding.result.text.toString())
+                var total: Number = performCalculation(binding.result.text.toString())
 
                 binding.finalResult.text = total.toString()
             }
@@ -100,48 +100,48 @@ class MainActivity : AppCompatActivity() {
         else
             return true
     }
-    fun performCalculation(stringExpression: String):Int {
+    fun performCalculation(stringExpression: String):Number {
         var charArray = stringExpression.toCharArray()
         var length=charArray.size
 
-        val numbers = Stack<Int>()
+        val numbers = Stack<Number>()
         val operators = Stack<Char>()
 
 var i=0
         while(i<length) {
-            if (charArray[i] >= '0' && charArray[i] <= '9') {
+            if ((charArray[i] >= '0' && charArray[i] <= '9') ||(charArray[i]=='.')) {
                 var mutedExpression = StringBuffer()
                 var j:Int=i
-                while (j < charArray.size && (charArray[j] >= '0' && charArray[j] <= '9')) {
+                while ((j < charArray.size && (charArray[j] >= '0' && charArray[j] <= '9')) || (j < charArray.size && charArray[j] == '.') ){
                     mutedExpression.append(charArray[j])
                     j++
                 }
-                numbers.push(mutedExpression.toString().toInt())
+                numbers.push(mutedExpression.toString().toDouble())
                 i=j
 
             } else if (charArray[i] == '+' || charArray[i] == '-' || charArray[i] == '*' || charArray[i] == '/' || charArray[i] == '%') {
                 while (!operators.isEmpty() && precedence(charArray[i], operators.peek())) {
-                    numbers.push(applyOperstions(operators.pop(), numbers.pop(), numbers.pop()))
+                    numbers.push(applyOperstions(operators.pop(), numbers.pop() as Number, numbers.pop() as Number))
                 }
                 operators.push(charArray[i])
 i++
             }
         }
         while (!operators.isEmpty()) {
-            numbers.push(applyOperstions(operators.pop(), numbers.pop(), numbers.pop()))
+            numbers.push(applyOperstions(operators.pop(), numbers.pop() as Number, numbers.pop() as Number))
         }
         return numbers.pop()
 
     }
 }
 
-fun applyOperstions(operator: Char, num1: Int, num2: Int): Int {
-    when (operator) {
-        '+' -> return num1 + num2
-        '-' -> return num1 - num2
-        '*' -> return num1 * num2
-        '/' -> return num2/ num1
-        '%' -> return num2 % num1
+fun <T : Number> applyOperstions(operator: Char, num1: T, num2: T): Number {
+     when (operator) {
+        '+' -> return String.format("%.4f",(num1.toDouble() + num2.toDouble())).toDouble()
+        '-' -> return String.format("%.4f",(num1.toDouble() - num2.toDouble())).toDouble()
+        '*' -> return String.format("%.4f",(num1.toDouble() * num2.toDouble())).toDouble()
+        '/' -> return String.format("%.4f",(num2.toDouble() / num1.toDouble())).toDouble()
+        '%' -> return String.format("%.4f",(num2.toDouble() % num1.toDouble())).toDouble()
         else -> return 0
     }
 }
