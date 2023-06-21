@@ -3,4 +3,7 @@
     <string name="hintOfDetails">enter user details</string>
     <string name="submit_button">submit</string>
     <string name="name_view">name</string>
+    <string name="delete_button">DELETE</string>
+    <string name="view_Text">view</string>
+    <style name="buttonColor">#FFFFFFFF</style>
 </resources>
