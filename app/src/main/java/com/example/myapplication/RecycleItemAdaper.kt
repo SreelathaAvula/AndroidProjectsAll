@@ -14,16 +14,19 @@ class RecycleItemAdaper(val names: List<String>) : Adapter<RecycleItemAdaper.Det
         val view: View = inflater.inflate(R.layout.item_view, parent, false)
         return DetailViewHolder(view)
     }
+
     override fun getItemCount(): Int {
         return names.size
     }
+
     override fun onBindViewHolder(holder: DetailViewHolder, position: Int) {
-        holder.item.text = names[position]
+        val user:String = names[position]
+        holder.item.text = user
+
         //set click
     }
     class DetailViewHolder(itemview: View) : ViewHolder(itemview) {
         var item = itemview.findViewById<TextView>(R.id.item)
-
     }
 }
 
